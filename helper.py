@@ -1,9 +1,11 @@
 import pandas as pd
-import pm4py as pm
+import matplotlib.pyplot as plt
+# import pm4py as pm
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import confusion_matrix
+#from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import roc_curve, roc_auc_score
 
 
 class Helper:
@@ -172,7 +174,7 @@ class Helper:
         temp = pd.concat([df1, df2], ignore_index=True)
         return temp.ffill().bfill().head(1)
 
-    def get_cm(self, X, y):
+    def train_model(self, X, y):
         """
         Prepares data, trains a Logistic Regression model, and returns the
         resulting Confusion Matrix.
@@ -198,7 +200,9 @@ class Helper:
 
         y_test_pred = log_reg.predict(X_test_scaled)
 
-        return confusion_matrix(y_test, y_test_pred)
+        y_test_proba = log_reg.predict_proba(X_test_scaled)[:, 1]
+
+        return [y_test, y_test_pred, y_test_proba]
 
     def calculate_reg_metrics(self, cm):
         """
@@ -230,3 +234,31 @@ class Helper:
             'Mis classification': [1 - accuracy],
             'Precision': [TP / (TP + FP)]
         })
+
+    def plot_reg_results(self, y_test, y_test_proba, name):
+        """
+        Generates and displays the Receiver Operating Characteristic (ROC) curve
+        and calculates the Area Under the Curve (AUC) for both training and
+        test datasets.
+
+        Note: This method assumes that 'model', 'X_train_scaled', 'X_test_scaled',
+              'y_train', and 'y_test' are globally available or defined within
+              the scope where this method is called (e.g., the notebook).
+        """
+        fpr_test, tpr_test, thresholds_test = roc_curve(y_test, y_test_proba)   # ROC curve
+        auc_test = roc_auc_score(y_test, y_test_proba)  # AUC-ROC
+
+        # Plot ROC curve
+        fig, ax = plt.subplots(figsize=(8, 6))
+        ax.plot(fpr_test, tpr_test, label=f'Test (AUC = {auc_test:.2f})', linewidth=2, color='red')
+        ax.plot([0, 1], [0, 1], 'k--', label='Random Classifier (AUC = 0.50)', linewidth=1.5)
+        ax.set_xlabel('False Positive Rate')
+        ax.set_ylabel('True Positive Rate')
+        ax.set_title('ROC Curve - Logistic Regression Model\n(' + name + ')',
+                     fontsize=14, fontweight='bold')
+        ax.legend(loc='lower right', fontsize=11)
+        ax.grid(True, alpha=0.3)
+        ax.set_xlim([0.0, 1.0])
+        ax.set_ylim([0.0, 1.0])
+        plt.tight_layout()
+        plt.show()
