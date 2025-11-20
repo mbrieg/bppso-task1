@@ -25,7 +25,7 @@ pip install -r requirements.txt
     ```
 - **Start the Jupyter Server:**
     ```
-    jupyter notebook
+    jupyter notebook .
     ```
 
 - **Open and Run:** Open `firstexercise.ipynb` and execute all cells separately or run all at once.
@@ -42,6 +42,6 @@ pip install -r requirements.txt
     ├── filtered_logs/
     ├── heuristic_nets/
 ├── process_models/             # Directory for custom models
-    ├── Pm5Py_Visualisations/
+    ├── Pm4Py_Visualisations/
 └── README.md                   
 ```
