@@ -250,7 +250,7 @@ class Helper:
 
         # Plot ROC curve
         fig, ax = plt.subplots(figsize=(8, 6))
-        ax.plot(fpr_test, tpr_test, label=f'Test (AUC = {auc_test:.2f})', linewidth=2, color='red')
+        ax.plot(fpr_test, tpr_test, label=f'Test (AUC = {auc_test:.2f})', linewidth=2, color='blue')
         ax.plot([0, 1], [0, 1], 'k--', label='Random Classifier (AUC = 0.50)', linewidth=1.5)
         ax.set_xlabel('False Positive Rate')
         ax.set_ylabel('True Positive Rate')
